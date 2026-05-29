@@ -3,7 +3,7 @@
 
 #include <gtkmm-4.0/gtkmm.h>
 
-#include "include/globalContext.h"
+#include "globalContext.h"
 
 class GraphView : public Gtk::DrawingArea
 {
@@ -12,11 +12,19 @@ public:
 private:
     GlobalContext *context;
     /*
-     * steps per pixel
+     * pixels per unit on the graph
      */
     double scale;
+
     double cameraX;
     double cameraY;
+
+    double dragBeginX;
+    double dragBeginY;
+
+    void onDragBegin(double startX, double startY);
+    void onDragUpdate(double offsetX, double offsetY);
+
     void onDraw(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height) const;
 };
 

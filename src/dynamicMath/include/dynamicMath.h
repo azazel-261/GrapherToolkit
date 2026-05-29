@@ -24,7 +24,7 @@ namespace DynMath
     class StaticComponent : public Expression {};
 
     /*
-     * Only contains the "inner" field, uses it's eval result to get it's own
+     * Only contains the "inner" field, uses it's eval result to get its own
      */
     class UnaryExpression : public Expression
     {
@@ -61,7 +61,7 @@ namespace DynMath
         /*
          * Just creates a map from x to expression evaluation for a given expression
          */
-        std::map<double, double> prepareGraph(const Expression *expr, double minX, double maxX, double step);
+        std::map<double, double> *prepareGraph(const Expression *expr, double minX, double maxX, double step);
     }
 }
 

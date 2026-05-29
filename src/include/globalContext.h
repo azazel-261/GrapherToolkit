@@ -2,10 +2,12 @@
 #define GRAPHERTOOLKIT_GLOBALCONTEXT_H
 
 #include "../dynamicMath/include/dynamicMath.h"
+#include <map>
 
 struct GlobalContext
 {
     DynMath::Expression *expr;
+    std::map<double, double> *graph;
 };
 
 #endif

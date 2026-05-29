@@ -231,17 +231,18 @@ Expression *Util::parse(std::vector<std::string> tokens)
     return parseRecursive(tokens.begin(), tokens.end());
 }
 
-std::map<double, double> Util::prepareGraph(const Expression *expr, const double minX, const double maxX, const double step)
+std::map<double, double> *Util::prepareGraph(const Expression *expr, const double minX, const double maxX, const double step)
 {
     if (step == 0) return {};
 
-    std::map<double, double> out = {};
+    auto *out = new std::map<double, double>();
 
     double x = minX;
 
     while (x <= maxX)
     {
-        out.emplace(x, expr -> evaluate(x));
+        out -> emplace(x, expr -> evaluate(x));
+        x += step;
     }
 
     return out;
