@@ -1,15 +1,21 @@
 #include <gtkmm-4.0/gtkmm.h>
+#include <gtkmm/eventcontrollerscroll.h>
 
 #include <map>
 
 #include "include/globalContext.h"
 #include "include/mainWindow.h"
-
+#include "debugging/include/debugging.h"
 #include "dynamicMath/include/dynamicMath.h"
 
-GraphView::GraphView(GlobalContext *ctx) : scale(10.0), cameraX(0.0), cameraY(0.0)
+
+GraphView::GraphView(GlobalContext *ctx) : scale(30.0), cameraX(0.0), cameraY(0.0)
 {
-    auto dragController = Gtk::GestureDrag::create();
+    const auto dragController = Gtk::GestureDrag::create();
+    const auto scrollController = Gtk::EventControllerScroll::create();
+
+    scrollController -> set_flags(Gtk::EventControllerScroll::Flags::VERTICAL);
+    scrollController -> signal_scroll().connect(sigc::mem_fun(*this, &GraphView::onScroll), false);
 
     dragController -> signal_drag_begin().connect(sigc::mem_fun(*this, &GraphView::onDragBegin));
     dragController -> signal_drag_update().connect(sigc::mem_fun(*this, &GraphView::onDragUpdate));
@@ -19,12 +25,33 @@ GraphView::GraphView(GlobalContext *ctx) : scale(10.0), cameraX(0.0), cameraY(0.
     set_draw_func(sigc::mem_fun(*this, &GraphView::onDraw));
 
     add_controller(dragController);
+    add_controller(scrollController);
 }
 
 void GraphView::onDraw(const Cairo::RefPtr<Cairo::Context> &cr, const int width, const int height) const
 {
     cr -> set_source_rgb(.8, .8, .8);
     cr -> paint();
+
+    if (-cameraY * scale >= 0 && -cameraY * scale <= height)
+    {
+        cr -> set_line_width(1);
+        cr -> set_source_rgb(.2, .2, .2);
+        cr -> move_to(0, -cameraY * scale);
+        cr -> line_to(width, -cameraY * scale);
+        cr -> stroke();
+        cr -> begin_new_path();
+    }
+
+    if (-cameraX * scale >= 0 && -cameraX * scale <= width)
+    {
+        cr -> set_line_width(1);
+        cr -> set_source_rgb(.2, .2, .2);
+        cr -> move_to(-cameraX * scale, 0);
+        cr -> line_to(-cameraX * scale, height);
+        cr -> stroke();
+        cr -> begin_new_path();
+    }
 
     if (context -> expr == nullptr) return;
 
@@ -44,6 +71,15 @@ void GraphView::onDraw(const Cairo::RefPtr<Cairo::Context> &cr, const int width,
     }
 
     cr -> stroke();
+}
+
+bool GraphView::onScroll(double dx, const double dy)
+{
+    scale -= dy * 2;
+    scale = std::clamp(scale, 4.0, 300.0);
+    logInfo(std::format("Scale: {}", scale));
+    queue_draw();
+    return true;
 }
 
 void GraphView::onDragBegin(const double startX, const double startY)

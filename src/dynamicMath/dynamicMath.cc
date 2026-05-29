@@ -41,7 +41,14 @@ const std::unordered_set<std::string> mediumPriorityOperations = {"*", "/"};
 constexpr bool isNumeric(const std::string& src)
 {
     if (src.empty()) return false;
-    return std::ranges::all_of(src, [](const char &c) { return isdigit(c) || c == '.'; });
+    if (src.contains('-'))
+    {
+        if (std::ranges::count(src, '-') != 1 || src.at(0) != '-')
+        {
+            return false;
+        }
+    }
+    return std::ranges::all_of(src, [](const char &c) { return isdigit(c) || c == '.' || c == '-'; });
 }
 
 UnaryExpression::UnaryExpression(Expression *_inner)
@@ -67,7 +74,20 @@ std::vector<std::string> Util::tokenize(const std::string& src)
 
     while (start + len <= src.size())
     {
+        bool parenteseFlag = false;
         std::string sub = src.substr(start, len);
+        if (sub == "-")
+        {
+            if (out.empty() || out.back() == "(" || unaryExpressions.contains(out.back()) || binaryExpressions.contains(out.back()))
+            {
+                out.emplace_back("-1");
+                out.emplace_back("*");
+                start += len;
+                len = 0;
+                ++len;
+                continue;
+            }
+        }
         if (unaryExpressions.contains(sub) ||
             binaryExpressions.contains(sub) ||
             sub == variable ||
@@ -92,6 +112,21 @@ std::vector<std::string> Util::tokenize(const std::string& src)
     logInfo(std::format("start: {}, len: {}", start, len));
 
     return out;
+}
+
+bool verifyUnaryOperationCompliance(const std::vector<std::string>::iterator tokensStart, const std::vector<std::string>::iterator tokensEnd)
+{
+    for (auto i = tokensStart; i < tokensEnd; ++i)
+    {
+        if (unaryExpressions.contains(*i))
+        {
+            if (i + 1 >= tokensEnd || *(i + 1) != "(")
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 /*
@@ -227,6 +262,11 @@ Expression *Util::parse(std::vector<std::string> tokens)
     if (std::ranges::count(tokens, "(") != std::ranges::count(tokens, ")"))
     {
         throw std::invalid_argument("Illegal depth");
+    }
+    if (!verifyUnaryOperationCompliance(tokens.begin(), tokens.end()))
+    {
+        logWarning("Improper use of unary operations");
+        return nullptr;
     }
     return parseRecursive(tokens.begin(), tokens.end());
 }
