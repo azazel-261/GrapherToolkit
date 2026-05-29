@@ -1,0 +1,10 @@
+add_subdirectory(debugging)
+add_subdirectory(dynamicMath)
+
+add_executable(app main.cc mainWindow.cc)
+
+target_link_libraries(app PRIVATE dynMath debugging)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(debugging PRIVATE DEBUG)
+endif()
