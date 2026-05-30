@@ -11,7 +11,7 @@ namespace DynMath::Expressions
         static StaticComponent *create(double _value);
         explicit Constant(double _value);
         [[nodiscard]] double evaluate(double x) const override;
-        std::string toString() override;
+        [[nodiscard]] std::string toString() const override;
     protected:
         double value;
     };
@@ -20,72 +20,72 @@ namespace DynMath::Expressions
     {
     public:
         static StaticComponent *create();
-        Variable();
+        Variable() = default;
         [[nodiscard]] double evaluate(double x) const override;
-        std::string toString() override;
+        [[nodiscard]] std::string toString() const override;
     };
 
     class Addition : public BinaryExpression
     {
     public:
         static BinaryExpression *create(Expression *_left, Expression *_right);
-        Addition(Expression *_left, Expression *_right);
+        using BinaryExpression::BinaryExpression;
         [[nodiscard]] double evaluate(double x) const override;
-        std::string toString() override;
+        [[nodiscard]] std::string toString() const override;
     };
 
     class Subtraction : public BinaryExpression
     {
     public:
         static BinaryExpression *create(Expression *_left, Expression *_right);
-        Subtraction(Expression *_left, Expression *_right);
+        using BinaryExpression::BinaryExpression;
         [[nodiscard]] double evaluate(double x) const override;
-        std::string toString() override;
+        [[nodiscard]] std::string toString() const override;
     };
 
     class Multiplication : public BinaryExpression
     {
     public:
         static BinaryExpression *create(Expression *_left, Expression *_right);
-        Multiplication(Expression *_left, Expression *_right);
+        using BinaryExpression::BinaryExpression;
         [[nodiscard]] double evaluate(double x) const override;
-        std::string toString() override;
+        [[nodiscard]] std::string toString() const override;
     };
 
     class Division : public BinaryExpression
     {
     public:
         static BinaryExpression *create(Expression *_left, Expression *_right);
-        Division(Expression *_left, Expression *_right);
+        using BinaryExpression::BinaryExpression;
         [[nodiscard]] double evaluate(double x) const override;
-        std::string toString() override;
+        [[nodiscard]] std::string toString() const override;
     };
 
     class Power : public BinaryExpression
     {
     public:
         static BinaryExpression *create(Expression *_left, Expression *_right);
-        Power(Expression *_left, Expression *_right);
+        using BinaryExpression::BinaryExpression;
         [[nodiscard]] double evaluate(double x) const override;
-        std::string toString() override;
+        [[nodiscard]] std::string toString() const override;
     };
 
     class Sine : public UnaryExpression
     {
     public:
         static UnaryExpression *create(Expression *_inner);
-        explicit Sine(Expression *_inner);
+        using UnaryExpression::UnaryExpression;
         [[nodiscard]] double evaluate(double x) const override;
-        std::string toString() override;
+        [[nodiscard]] std::string toString() const override;
     };
 
     class Cosine : public UnaryExpression
     {
     public:
         static UnaryExpression *create(Expression *_inner);
-        explicit Cosine(Expression *_inner);
+        using UnaryExpression::UnaryExpression;
         [[nodiscard]] double evaluate(double x) const override;
-        std::string toString() override;
+        [[nodiscard]] std::string toString() const override;
     };
 }
 

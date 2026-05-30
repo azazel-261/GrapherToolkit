@@ -62,6 +62,19 @@ BinaryExpression::BinaryExpression(Expression *_left, Expression *_right)
     right = _right;
 }
 
+UnaryExpression::~UnaryExpression()
+{
+    logInfo("Deleting unary...");
+    delete inner;
+}
+
+BinaryExpression::~BinaryExpression()
+{
+    logInfo("Deleting binary...");
+    delete left;
+    delete right;
+}
+
 /*
  * Splits the initial string into substrings, separating into characters/strings mentioned in structures above
  */

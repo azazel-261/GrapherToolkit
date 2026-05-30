@@ -15,14 +15,17 @@ namespace DynMath
     public:
         virtual ~Expression() = default;
         [[nodiscard]] virtual double evaluate(double x) const = 0;
-        virtual std::string toString() = 0;
+        [[nodiscard]] virtual std::string toString() const = 0;
     };
 
     /*
      * For anything that doesn't need recursion to be parsed
      */
-    class StaticComponent : public Expression {};
-
+    class StaticComponent : public Expression
+    {
+    public:
+        ~StaticComponent() override = default;
+    };
     /*
      * Only contains the "inner" field, uses it's eval result to get its own
      */
@@ -30,6 +33,7 @@ namespace DynMath
     {
     public:
         explicit UnaryExpression(Expression *_inner);
+        ~UnaryExpression() override;
     protected:
         Expression *inner;
     };
@@ -41,6 +45,7 @@ namespace DynMath
     {
     public:
         BinaryExpression(Expression *_left, Expression *_right);
+        ~BinaryExpression() override;
     protected:
         Expression *left;
         Expression *right;

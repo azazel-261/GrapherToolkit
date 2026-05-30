@@ -22,14 +22,12 @@ double DynMath::Expressions::Constant::evaluate(double x) const
     return value;
 }
 
-std::string DynMath::Expressions::Constant::toString()
+std::string DynMath::Expressions::Constant::toString() const
 {
     return std::to_string(value);
 }
 
 // Variable
-
-DynMath::Expressions::Variable::Variable() = default;
 
 DynMath::StaticComponent *DynMath::Expressions::Variable::create()
 {
@@ -41,15 +39,12 @@ double DynMath::Expressions::Variable::evaluate(const double x) const
     return x;
 }
 
-std::string DynMath::Expressions::Variable::toString()
+std::string DynMath::Expressions::Variable::toString() const
 {
     return "x";
 }
 
 // Addition
-
-DynMath::Expressions::Addition::Addition(Expression *_left, Expression *_right)
-    : BinaryExpression(_left, _right) {}
 
 DynMath::BinaryExpression *DynMath::Expressions::Addition::create(Expression *_left, Expression *_right)
 {
@@ -61,15 +56,12 @@ double DynMath::Expressions::Addition::evaluate(const double x) const
     return left -> evaluate(x) + right -> evaluate(x);
 }
 
-std::string DynMath::Expressions::Addition::toString()
+std::string DynMath::Expressions::Addition::toString() const
 {
     return "(" + left -> toString() + ") + (" + right -> toString() + ")";
 }
 
 // Subtraction
-
-DynMath::Expressions::Subtraction::Subtraction(Expression *_left, Expression *_right)
-    : BinaryExpression(_left, _right) {}
 
 DynMath::BinaryExpression *DynMath::Expressions::Subtraction::create(Expression *_left, Expression *_right)
 {
@@ -81,15 +73,12 @@ double DynMath::Expressions::Subtraction::evaluate(const double x) const
     return left -> evaluate(x) - right -> evaluate(x);
 }
 
-std::string DynMath::Expressions::Subtraction::toString()
+std::string DynMath::Expressions::Subtraction::toString() const
 {
     return "(" + left -> toString() + ") - (" + right -> toString() + ")";
 }
 
 // Multiplication
-
-DynMath::Expressions::Multiplication::Multiplication(Expression *_left, Expression *_right)
-    : BinaryExpression(_left, _right) {}
 
 DynMath::BinaryExpression *DynMath::Expressions::Multiplication::create(Expression *_left, Expression *_right)
 {
@@ -101,15 +90,12 @@ double DynMath::Expressions::Multiplication::evaluate(const double x) const
     return left -> evaluate(x) * right -> evaluate(x);
 }
 
-std::string DynMath::Expressions::Multiplication::toString()
+std::string DynMath::Expressions::Multiplication::toString() const
 {
     return "(" + left -> toString() + ") * (" + right -> toString() + ")";
 }
 
 // Division
-
-DynMath::Expressions::Division::Division(Expression *_left, Expression *_right)
-    : BinaryExpression(_left, _right) {}
 
 DynMath::BinaryExpression *DynMath::Expressions::Division::create(Expression *_left, Expression *_right)
 {
@@ -121,15 +107,12 @@ double DynMath::Expressions::Division::evaluate(const double x) const
     return left -> evaluate(x) * right -> evaluate(x);
 }
 
-std::string DynMath::Expressions::Division::toString()
+std::string DynMath::Expressions::Division::toString() const
 {
     return "(" + left -> toString() + ") / (" + right -> toString() + ")";
 }
 
 // Power
-
-DynMath::Expressions::Power::Power(Expression *_left, Expression *_right)
-    : BinaryExpression(_left, _right) {}
 
 DynMath::BinaryExpression *DynMath::Expressions::Power::create(Expression *_left, Expression *_right)
 {
@@ -141,14 +124,12 @@ double DynMath::Expressions::Power::evaluate(const double x) const
     return pow(left -> evaluate(x), right -> evaluate(x));
 }
 
-std::string DynMath::Expressions::Power::toString()
+std::string DynMath::Expressions::Power::toString() const
 {
     return "(" + left -> toString() + ") ^ (" + right -> toString() + ")";
 }
 
 // Sine
-
-DynMath::Expressions::Sine::Sine(Expression *_inner) : UnaryExpression(_inner) {}
 
 DynMath::UnaryExpression *DynMath::Expressions::Sine::create(Expression *_inner)
 {
@@ -160,14 +141,12 @@ double DynMath::Expressions::Sine::evaluate(const double x) const
     return std::sin(x);
 }
 
-std::string DynMath::Expressions::Sine::toString()
+std::string DynMath::Expressions::Sine::toString() const
 {
     return "sin(" + inner -> toString() + ")";
 }
 
 // Cosine
-
-DynMath::Expressions::Cosine::Cosine(Expression *_inner) : UnaryExpression(_inner) {}
 
 DynMath::UnaryExpression *DynMath::Expressions::Cosine::create(Expression *_inner)
 {
@@ -179,7 +158,7 @@ double DynMath::Expressions::Cosine::evaluate(const double x) const
     return std::cos(x);
 }
 
-std::string DynMath::Expressions::Cosine::toString()
+std::string DynMath::Expressions::Cosine::toString() const
 {
     return "cos(" + inner -> toString() + ")";
 }
