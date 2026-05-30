@@ -104,7 +104,7 @@ DynMath::BinaryExpression *DynMath::Expressions::Division::create(Expression *_l
 
 double DynMath::Expressions::Division::evaluate(const double x) const
 {
-    return left -> evaluate(x) * right -> evaluate(x);
+    return left -> evaluate(x) / right -> evaluate(x);
 }
 
 std::string DynMath::Expressions::Division::toString() const

@@ -2,6 +2,7 @@
 #include <gtkmm/eventcontrollerscroll.h>
 
 #include <map>
+#include <cmath>
 
 #include "include/globalContext.h"
 #include "include/mainWindow.h"
@@ -11,6 +12,9 @@
 
 GraphView::GraphView(GlobalContext *ctx) : scale(30.0), cameraX(0.0), cameraY(0.0)
 {
+    dragBeginX = 0.0;
+    dragBeginY = 0.0;
+
     const auto dragController = Gtk::GestureDrag::create();
     const auto scrollController = Gtk::EventControllerScroll::create();
 
@@ -55,7 +59,7 @@ void GraphView::onDraw(const Cairo::RefPtr<Cairo::Context> &cr, const int width,
 
     if (context -> expr == nullptr) return;
 
-    if (context -> graph != nullptr) delete context -> graph;
+    delete context -> graph;
 
     context -> graph = DynMath::Util::prepareGraph(context -> expr, cameraX, cameraX + height / scale, 1/scale);
 
@@ -67,7 +71,14 @@ void GraphView::onDraw(const Cairo::RefPtr<Cairo::Context> &cr, const int width,
 
     for (const auto &[x, y] : graph)
     {
-        cr -> line_to(x * scale - cameraX * scale, -y * scale - cameraY * scale);
+        if (isfinite(y))
+        {
+            cr -> line_to(x * scale - cameraX * scale, -y * scale - cameraY * scale);
+        }
+        else
+        {
+            cr -> begin_new_path();
+        }
     }
 
     cr -> stroke();
@@ -95,6 +106,35 @@ void GraphView::onDragUpdate(const double offsetX, const double offsetY)
     queue_draw();
 }
 
+void MainWindow::onExpressionTextFieldChange()
+{
+    std::string entryExpr = expressionBox.get_text();
+    std::erase(entryExpr, ' ');
+
+    DynMath::Expression *expr = nullptr;
+
+    try
+    {
+        const std::vector<std::string> tokens = DynMath::Util::tokenize(entryExpr);
+        expr = DynMath::Util::parse(tokens);
+    } catch (std::invalid_argument &e)
+    {
+        const auto popover = Gtk::make_managed<Gtk::Popover>();
+        const auto label = Gtk::make_managed<Gtk::Label>(e.what());
+        popover -> set_child(*label);
+        popover -> set_parent(expressionBox);
+        popover -> set_has_arrow(true);
+        popover -> popup();
+    }
+
+    delete context -> expr;
+    context -> expr = expr;
+
+    if (expr != nullptr) logInfo(std::format("Expression: {}", expr -> toString()));
+
+    view.queue_draw();
+}
+
 MainWindow::MainWindow(GlobalContext *ctx) : view(ctx)
 {
     context = ctx;
@@ -105,7 +145,10 @@ MainWindow::MainWindow(GlobalContext *ctx) : view(ctx)
     view.set_margin_bottom(10);
     masterLayout->append(view);
 
+    expressionBox.set_placeholder_text("f(x)=...");
     expressionBox.set_hexpand(true);
+    expressionBox.signal_activate().connect(sigc::mem_fun(*this, &MainWindow::onExpressionTextFieldChange));
+
     masterLayout->append(expressionBox);
 
     masterLayout->set_margin(10);

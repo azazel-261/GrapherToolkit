@@ -119,7 +119,7 @@ std::vector<std::string> Util::tokenize(const std::string& src)
     if (start != src.size())
     {
         logWarning(std::format("Unrecognized token at position {}", start));
-        return {};
+        throw std::invalid_argument(std::format("Unrecognized token at position {}", start));
     }
 
     logInfo(std::format("start: {}, len: {}", start, len));
@@ -148,7 +148,9 @@ bool verifyUnaryOperationCompliance(const std::vector<std::string>::iterator tok
 int evaluateTokenDepth(const std::vector<std::string>::iterator tokensStart, const int index)
 {
     const auto limit = tokensStart + index;
-    return std::count(tokensStart, limit, "(") - std::count(tokensStart, limit, ")");
+    const int depth = std::count(tokensStart, limit, "(") - std::count(tokensStart, limit, ")");
+    if (depth < 0) throw std::invalid_argument("Illegal expression depth");
+    return depth;
 }
 
 /*
@@ -246,7 +248,7 @@ Expression *parseRecursive(const std::vector<std::string>::iterator tokensStart,
                 if (isNumeric(token)) return Expressions::Constant::create(std::stod(token));
             }
         }
-        return nullptr;
+        throw std::invalid_argument(std::format("Invalid static token"));
     }
 
     std::string token = *(tokensStart + entryPoint);
@@ -255,7 +257,7 @@ Expression *parseRecursive(const std::vector<std::string>::iterator tokensStart,
     if (unaryExpressions.contains(token))
     {
         Expression *inner = parseRecursive(tokensStart + entryPoint + 1, tokensEnd);
-        if (inner == nullptr) return nullptr;
+        if (inner == nullptr) throw std::invalid_argument("Incomplete expression");
         return unaryExpressions.at(token)(inner);
     }
 
@@ -263,23 +265,21 @@ Expression *parseRecursive(const std::vector<std::string>::iterator tokensStart,
     {
         Expression *left = parseRecursive(tokensStart, tokensStart + entryPoint);
         Expression *right = parseRecursive(tokensStart + entryPoint + 1, tokensEnd);
-        if (left == nullptr || right == nullptr) return nullptr;
+        if (left == nullptr || right == nullptr) throw std::invalid_argument("Incomplete expression");
         return binaryExpressions.at(token)(left, right);
     }
-
-    return nullptr;
+    throw std::invalid_argument(std::format("No valid operation found for {}", token));
 }
 
 Expression *Util::parse(std::vector<std::string> tokens)
 {
     if (std::ranges::count(tokens, "(") != std::ranges::count(tokens, ")"))
     {
-        throw std::invalid_argument("Illegal depth");
+        throw std::invalid_argument("Incorrect amount of parentheses");
     }
     if (!verifyUnaryOperationCompliance(tokens.begin(), tokens.end()))
     {
-        logWarning("Improper use of unary operations");
-        return nullptr;
+        throw std::invalid_argument("Improper use of unary operations. Please use parentheses");
     }
     return parseRecursive(tokens.begin(), tokens.end());
 }

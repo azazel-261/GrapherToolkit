@@ -9,7 +9,7 @@
 int main(const int argc, char *argv[]) {
     const auto app = Gtk::Application::create("org.zyazya-pw.graphertoolkit");
 
-    std::string src;
+    /*std::string src;
 
     std::cin >> src;
 
@@ -21,9 +21,9 @@ int main(const int argc, char *argv[]) {
     DynMath::Expression *expr2 = DynMath::Util::parse(tokens);
     delete expr2;
 
-    if (expr != nullptr) logInfo(std::format("{}", expr -> toString()));
+    if (expr != nullptr) logInfo(std::format("{}", expr -> toString()));*/
 
-    GlobalContext ctx = {expr};
+    GlobalContext ctx = {nullptr, nullptr};
 
     return app -> make_window_and_run<MainWindow>(argc, argv, &ctx);
 }
