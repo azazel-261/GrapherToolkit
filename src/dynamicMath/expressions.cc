@@ -138,7 +138,7 @@ DynMath::UnaryExpression *DynMath::Expressions::Sine::create(Expression *_inner)
 
 double DynMath::Expressions::Sine::evaluate(const double x) const
 {
-    return std::sin(x);
+    return std::sin(inner -> evaluate(x));
 }
 
 std::string DynMath::Expressions::Sine::toString() const
@@ -155,7 +155,7 @@ DynMath::UnaryExpression *DynMath::Expressions::Cosine::create(Expression *_inne
 
 double DynMath::Expressions::Cosine::evaluate(const double x) const
 {
-    return std::cos(x);
+    return std::cos(inner -> evaluate(x));
 }
 
 std::string DynMath::Expressions::Cosine::toString() const
