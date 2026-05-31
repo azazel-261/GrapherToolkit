@@ -7,7 +7,6 @@
 struct GlobalContext
 {
     DynMath::Expression *expr;
-    std::map<double, double> *graph;
 };
 
 #endif

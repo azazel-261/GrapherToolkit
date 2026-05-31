@@ -18,7 +18,7 @@ namespace DynMath
         [[nodiscard]] std::vector<std::vector<Point>> GraphExpression(double minX, double maxX, double step) const;
     private:
         DynMath::Expression *fn;
-        void subdivide(std::vector<Point> &segment, double x0, double y0, double x1, double y1, int depth = 0) const;
+        bool subdivide(std::vector<Point> &segment, double x0, double y0, double x1, double y1, int depth = 0) const;
     };
 }
 

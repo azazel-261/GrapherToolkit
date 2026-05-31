@@ -1,9 +1,6 @@
 #include <gtkmm-4.0/gtkmm.h>
 #include <gtkmm/eventcontrollerscroll.h>
 
-#include <map>
-#include <cmath>
-
 #include "include/globalContext.h"
 #include "include/mainWindow.h"
 #include "debugging/include/debugging.h"
@@ -20,9 +17,6 @@ GraphView::GraphView(GlobalContext *ctx) : scale(30.0), cameraX(0.0), cameraY(0.
 {
     dragBeginX = 0.0;
     dragBeginY = 0.0;
-
-    windowWidth = 0.0;
-    windowHeight = 0.0;
 
     const auto dragController = Gtk::GestureDrag::create();
     const auto scrollController = Gtk::EventControllerScroll::create();
@@ -44,11 +38,8 @@ GraphView::GraphView(GlobalContext *ctx) : scale(30.0), cameraX(0.0), cameraY(0.
 /*
  * Called with each queue_draw to update the graph
  */
-void GraphView::onDraw(const Cairo::RefPtr<Cairo::Context> &cr, const int width, const int height)
+void GraphView::onDraw(const Cairo::RefPtr<Cairo::Context> &cr, const int width, const int height) const
 {
-    windowWidth = width;
-    windowHeight = height;
-
     cr -> set_source_rgb(.8, .8, .8);
     cr -> paint();
 
@@ -85,7 +76,7 @@ void GraphView::onDraw(const Cairo::RefPtr<Cairo::Context> &cr, const int width,
     {
         for (const auto &point : segment)
         {
-            cr -> line_to(point.x * scale - cameraX * scale, point.y * scale - cameraY * scale);
+            cr -> line_to(point.x * scale - cameraX * scale, -point.y * scale - cameraY * scale);
         }
         cr -> stroke();
         cr -> begin_new_path();

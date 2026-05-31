@@ -4,31 +4,31 @@
 
 using namespace DynMath;
 
-constexpr int maxSubdivisionDepth = 12;
-constexpr double maxJump = 1000.0;
-constexpr double tolerance = 0.01;
+constexpr int maxSubdivisionDepth = 15;
+constexpr double maxJump = 500.0;
+constexpr double tolerance = 0.0001;
 
 bool isValid(const double y)
 {
     return std::isfinite(y);
 }
 
-Grapher::Grapher(DynMath::Expression *expr) : fn(expr) {}
+Grapher::Grapher(Expression *expr) : fn(expr) {}
 
 /*
  * Smart sampling! This thing basically checks if a function is *linear enough* at the range given
  */
-void Grapher::subdivide(std::vector<Point> &segment, const double x0, const double y0, const double x1, const double y1, const int depth) const
+bool Grapher::subdivide(std::vector<Point> &segment, const double x0, const double y0, const double x1, const double y1, const int depth) const
 {
     if (depth >= maxSubdivisionDepth)
     {
         segment.push_back({x1, y1});
-        return;
+        return true;
     }
     const double x05 = (x0 + x1) / 2.0;
     const double y05 = fn -> evaluate(x05);
 
-    if (!isValid(y05)) return;
+    if (!isValid(y05)) return false;
 
     const double yExpected = (y0 + y1) / 2;
 
@@ -36,7 +36,7 @@ void Grapher::subdivide(std::vector<Point> &segment, const double x0, const doub
      * Check for asymptote
      * y0 and y1 have to be large and opposite
      */
-    if (std::abs(y0) > maxJump && std::abs(y1) > maxJump && (y0 > 0) != (y1 > 0)) return;
+    if (std::abs(y0) > maxJump && std::abs(y1) > maxJump && (y0 > 0) != (y1 > 0)) return false;
 
     /*
      * Compares to a linear function
@@ -44,11 +44,10 @@ void Grapher::subdivide(std::vector<Point> &segment, const double x0, const doub
     if (std::abs(y05 - yExpected) < tolerance)
     {
         segment.push_back({x1, y1});
-        return;
+        return true;
     }
 
-    subdivide(segment, x0, y0, x05, y05, depth + 1);
-    subdivide(segment, x05, y05, x1, y1, depth + 1);
+    return subdivide(segment, x0, y0, x05, y05, depth + 1) && subdivide(segment, x05, y05, x1, y1, depth + 1);
 }
 
 /*
@@ -91,7 +90,13 @@ std::vector<std::vector<Point>> Grapher::GraphExpression(const double minX, cons
             continue;
         }
 
-        subdivide(segment, x0, y0, x1, y1);
+        if (!subdivide(segment, x0, y0, x1, y1))
+        {
+            if (segment.size() > 1) out.push_back(segment);
+            segment.clear();
+
+            segment.push_back({x1, y1});
+        }
 
         x0 = x1;
         y0 = y1;

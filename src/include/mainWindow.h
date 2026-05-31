@@ -22,15 +22,12 @@ private:
     double dragBeginX{};
     double dragBeginY{};
 
-    double windowWidth;
-    double windowHeight;
-
     void onDragBegin(double startX, double startY);
     void onDragUpdate(double offsetX, double offsetY);
 
     bool onScroll(double dx, double dy);
 
-    void onDraw(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
+    void onDraw(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height) const;
 };
 
 class MainWindow : public Gtk::Window
