@@ -1,6 +1,9 @@
 #include "include/grapher.h"
 
 #include <cmath>
+#include <format>
+
+#include "../debugging/include/debugging.h"
 
 using namespace DynMath;
 
@@ -28,7 +31,10 @@ bool Grapher::subdivide(std::vector<Point> &segment, const double x0, const doub
     const double x05 = (x0 + x1) / 2.0;
     const double y05 = fn -> evaluate(x05);
 
-    if (!isValid(y05)) return false;
+    if (!isValid(y05))
+    {
+        return false;
+    }
 
     const double yExpected = (y0 + y1) / 2;
 
@@ -36,7 +42,10 @@ bool Grapher::subdivide(std::vector<Point> &segment, const double x0, const doub
      * Check for asymptote
      * y0 and y1 have to be large and opposite
      */
-    if (std::abs(y0) > maxJump && std::abs(y1) > maxJump && (y0 > 0) != (y1 > 0)) return false;
+    if (std::abs(y0) > maxJump && std::abs(y1) > maxJump && (y0 > 0) != (y1 > 0))
+    {
+        return false;
+    }
 
     /*
      * Compares to a linear function
@@ -72,7 +81,7 @@ std::vector<std::vector<Point>> Grapher::GraphExpression(const double minX, cons
     {
         const double y1 = fn -> evaluate(x1);
 
-        bool valid1 = isValid(y1);
+        const bool valid1 = isValid(y1);
 
         // To see if there's been a sudden jump/basically if the function isn't continuous enough
         if (!valid0 || !valid1 || std::abs(y1 - y0) > maxJump)
@@ -87,6 +96,7 @@ std::vector<std::vector<Point>> Grapher::GraphExpression(const double minX, cons
 
             valid0 = valid1;
 
+            x1 += step;
             continue;
         }
 

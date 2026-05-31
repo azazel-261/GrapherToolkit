@@ -162,3 +162,54 @@ std::string DynMath::Expressions::Cosine::toString() const
 {
     return "cos(" + inner -> toString() + ")";
 }
+
+// Tangent
+
+DynMath::UnaryExpression *DynMath::Expressions::Tangent::create(Expression *_inner)
+{
+    return new Tangent(_inner);
+}
+
+double DynMath::Expressions::Tangent::evaluate(const double x) const
+{
+    return tan(inner -> evaluate(x));
+}
+
+std::string DynMath::Expressions::Tangent::toString() const
+{
+    return "tan(" + inner -> toString() + ")";
+}
+
+// Log base e
+
+DynMath::UnaryExpression *DynMath::Expressions::NaturalLogarithm::create(Expression *_inner)
+{
+    return new NaturalLogarithm(_inner);
+}
+
+double DynMath::Expressions::NaturalLogarithm::evaluate(double x) const
+{
+    return log(inner -> evaluate(x));
+}
+
+std::string DynMath::Expressions::NaturalLogarithm::toString() const
+{
+    return "ln(" + inner -> toString() + ")";
+}
+
+// Log base 10
+
+DynMath::UnaryExpression *DynMath::Expressions::LogarithmBase10::create(Expression *_inner)
+{
+    return new LogarithmBase10(_inner);
+}
+
+double DynMath::Expressions::LogarithmBase10::evaluate(double x) const
+{
+    return log10(inner -> evaluate(x));
+}
+
+std::string DynMath::Expressions::LogarithmBase10::toString() const
+{
+    return "log(" + inner -> toString() + ")";
+}

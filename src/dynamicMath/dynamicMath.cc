@@ -14,7 +14,10 @@ using namespace DynMath;
 
 const std::map<std::string, UnaryExpression* (*)(Expression *)> unaryExpressions = {
     {"sin", &Expressions::Sine::create},
-    {"cos", &Expressions::Cosine::create}
+    {"cos", &Expressions::Cosine::create},
+    {"tan", &Expressions::Tangent::create},
+    {"ln", &Expressions::NaturalLogarithm::create},
+    {"log", &Expressions::LogarithmBase10::create}
 };
 
 const std::map<std::string, BinaryExpression* (*)(Expression *, Expression *)> binaryExpressions = {

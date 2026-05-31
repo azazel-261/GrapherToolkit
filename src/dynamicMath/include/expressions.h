@@ -87,6 +87,33 @@ namespace DynMath::Expressions
         [[nodiscard]] double evaluate(double x) const override;
         [[nodiscard]] std::string toString() const override;
     };
+
+    class Tangent : public UnaryExpression
+    {
+    public:
+        static UnaryExpression *create(Expression *_inner);
+        using UnaryExpression::UnaryExpression;
+        [[nodiscard]] double evaluate(double x) const override;
+        [[nodiscard]] std::string toString() const override;
+    };
+
+    class NaturalLogarithm : public UnaryExpression
+    {
+    public:
+        static UnaryExpression *create(Expression *_inner);
+        using UnaryExpression::UnaryExpression;
+        [[nodiscard]] double evaluate(double x) const override;
+        [[nodiscard]] std::string toString() const override;
+    };
+
+    class LogarithmBase10 : public UnaryExpression
+    {
+    public:
+        static UnaryExpression *create(Expression *_inner);
+        using UnaryExpression::UnaryExpression;
+        [[nodiscard]] double evaluate(double x) const override;
+        [[nodiscard]] std::string toString() const override;
+    };
 }
 
 #endif

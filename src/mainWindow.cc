@@ -13,7 +13,7 @@ constexpr double jumpLimit = 500;
 /*
  * Not much here, just a lot of signal connections
  */
-GraphView::GraphView(GlobalContext *ctx) : scale(30.0), cameraX(0.0), cameraY(0.0)
+GraphView::GraphView(GlobalContext *ctx) : scale(200.0), cameraX(0.0), cameraY(0.0)
 {
     dragBeginX = 0.0;
     dragBeginY = 0.0;
@@ -70,7 +70,7 @@ void GraphView::onDraw(const Cairo::RefPtr<Cairo::Context> &cr, const int width,
     cr -> set_line_width(4);
     cr -> set_source_rgb(.5, 0, .7);
 
-    const auto graph = gr.GraphExpression(cameraX, cameraX + width / scale, 1/scale);
+    const auto graph = gr.GraphExpression(cameraX, cameraX + width / scale, .01);
 
     for (const auto &segment : graph)
     {
@@ -90,7 +90,7 @@ void GraphView::onDraw(const Cairo::RefPtr<Cairo::Context> &cr, const int width,
 bool GraphView::onScroll(double dx, const double dy)
 {
     scale -= dy * 2;
-    scale = std::clamp(scale, 4.0, 300.0);
+    scale = std::clamp(scale, 64.0, 512.0);
     queue_draw();
     return true;
 }
@@ -163,7 +163,7 @@ MainWindow::MainWindow(GlobalContext *ctx) : view(ctx)
 
     set_child(*masterLayout);
 
-    set_title("Grapher Toolkit v0.1");
+    set_title("Grapher Toolkit v0.2");
     set_size_request(600, 800);
     // set_resizable(false);
 }

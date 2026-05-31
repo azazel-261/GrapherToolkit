@@ -14,10 +14,10 @@ namespace DynMath
     class Grapher
     {
     public:
-        explicit Grapher(DynMath::Expression *expr);
+        explicit Grapher(Expression *expr);
         [[nodiscard]] std::vector<std::vector<Point>> GraphExpression(double minX, double maxX, double step) const;
     private:
-        DynMath::Expression *fn;
+        Expression *fn;
         bool subdivide(std::vector<Point> &segment, double x0, double y0, double x1, double y1, int depth = 0) const;
     };
 }
