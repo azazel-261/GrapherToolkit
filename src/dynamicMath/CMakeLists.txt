@@ -1,1 +1,1 @@
-add_library(dynMath dynamicMath.cc expressions.cc)
+add_library(dynMath dynamicMath.cc expressions.cc grapher.cc)

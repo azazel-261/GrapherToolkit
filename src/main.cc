@@ -9,20 +9,6 @@
 int main(const int argc, char *argv[]) {
     const auto app = Gtk::Application::create("org.zyazya-pw.graphertoolkit");
 
-    /*std::string src;
-
-    std::cin >> src;
-
-    std::vector<std::string> tokens = DynMath::Util::tokenize(src);
-
-    logInfo(std::format("Expression: {}", tokens));
-
-    DynMath::Expression *expr = DynMath::Util::parse(tokens);
-    DynMath::Expression *expr2 = DynMath::Util::parse(tokens);
-    delete expr2;
-
-    if (expr != nullptr) logInfo(std::format("{}", expr -> toString()));*/
-
     GlobalContext ctx = {nullptr, nullptr};
 
     return app -> make_window_and_run<MainWindow>(argc, argv, &ctx);

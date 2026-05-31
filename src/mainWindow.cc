@@ -8,6 +8,7 @@
 #include "include/mainWindow.h"
 #include "debugging/include/debugging.h"
 #include "dynamicMath/include/dynamicMath.h"
+#include "dynamicMath/include/grapher.h"
 
 constexpr double yValueLimit = 1e4;
 constexpr double jumpLimit = 500;
@@ -73,47 +74,24 @@ void GraphView::onDraw(const Cairo::RefPtr<Cairo::Context> &cr, const int width,
 
     if (context -> expr == nullptr) return;
 
-    delete context -> graph;
-
-    context -> graph = DynMath::Util::prepareGraph(context -> expr, cameraX, cameraX + width / scale, .25/scale);
-
-    std::map<double, double> graph = *(context -> graph);
+    const DynMath::Grapher gr(context -> expr);
 
     cr -> set_line_width(4);
     cr -> set_source_rgb(.5, 0, .7);
 
-    bool newSegment = true;
-    double prevY = 0;
+    const auto graph = gr.GraphExpression(cameraX, cameraX + width / scale, 1/scale);
 
-    for (const auto &[x, y] : graph)
+    for (const auto &segment : graph)
     {
-        if (!std::isfinite(y) || std::abs(y) > yValueLimit)
+        for (const auto &point : segment)
         {
-            newSegment = true;
-            continue;
+            cr -> line_to(point.x * scale - cameraX * scale, point.y * scale - cameraY * scale);
         }
-        if (!newSegment && std::abs(y - prevY) > jumpLimit)
-        {
-            newSegment = true;
-        }
-
-        const double sx = x * scale - cameraX * scale;
-        const double sy = -y * scale - cameraY * scale;
-
-        if (newSegment)
-        {
-            cr -> move_to(sx, sy);
-            newSegment = false;
-        }
-        else
-        {
-            cr -> line_to(sx, sy);
-        }
-        prevY = y;
+        cr -> stroke();
+        cr -> begin_new_path();
     }
-
-    cr -> stroke();
 }
+
 
 /*
  * Everything below is self-explanatory
@@ -196,5 +174,5 @@ MainWindow::MainWindow(GlobalContext *ctx) : view(ctx)
 
     set_title("Grapher Toolkit v0.1");
     set_size_request(600, 800);
-    set_resizable(false);
+    // set_resizable(false);
 }
