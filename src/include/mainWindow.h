@@ -37,6 +37,9 @@ public:
 private:
     void onExpressionTextFieldChange();
 
+    static void onAboutButton();
+    static void onOperationsButton();
+
     GlobalContext *context;
     Gtk::Entry expressionBox;
     GraphView view;

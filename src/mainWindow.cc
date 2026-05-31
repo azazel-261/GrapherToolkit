@@ -70,7 +70,7 @@ void GraphView::onDraw(const Cairo::RefPtr<Cairo::Context> &cr, const int width,
     cr -> set_line_width(4);
     cr -> set_source_rgb(.5, 0, .7);
 
-    const auto graph = gr.GraphExpression(cameraX, cameraX + width / scale, .01);
+    const auto graph = gr.GraphExpression(cameraX, cameraX + width / scale, 0.005);
 
     for (const auto &segment : graph)
     {
@@ -140,14 +140,84 @@ void MainWindow::onExpressionTextFieldChange()
     view.queue_draw();
 }
 
+void MainWindow::onAboutButton()
+{
+    auto aboutWindow = Gtk::make_managed<Gtk::AboutDialog>();
+
+    aboutWindow -> set_program_name("GrapherToolkit");
+    aboutWindow -> set_version("V0.2");
+    aboutWindow -> set_comments("Created by Heorhii Blahoveshchenkyi for the 2026L class of PW\n"
+                                "Resources used:\ngtkmm-4.0 library as well as all of the dependencies\nThe GNOME gtkmm docs\n"
+                                "Various other documentations and forums\nMultiple cups of tea");
+
+    aboutWindow -> set_modal(true);
+
+    aboutWindow -> show();
+}
+
+void MainWindow::onOperationsButton()
+{
+    auto helpWindow = Gtk::make_managed<Gtk::Window>();
+    helpWindow -> set_modal(true);
+    helpWindow -> set_size_request(400, 200);
+    helpWindow -> set_resizable(false);
+
+    auto label = Gtk::make_managed<Gtk::Label>("Available symbols/operations:\n"
+                                               "(, ) -> parentheses\n"
+                                               "+, -, *, / -> basic arithmetic operations, require 2 operands\n"
+                                               "- -> can be used to negate anything that comes after it\n"
+                                               "sin, cos, tan -> Trigonometric operations, argument MUST be in parentheses (e.g. sin(x+1))\n"
+                                               "^ -> power (e.g. 3^9)\n"
+                                               "ln -> logarithm base e (~2.72)\n"
+                                               "log -> logarithm base ten (~9.999999...)\n"
+                                               "Please note that both logarithms also require parentheses\n"
+                                               "e -> Euler's number (~2.72)\n"
+                                               "pi -> ~3.14\n"
+                                               "x -> variable to be used as the function argument");
+
+    label -> set_halign(Gtk::Align::START);
+    label -> set_valign(Gtk::Align::START);
+    label -> set_wrap_mode(Pango::WrapMode::WORD);
+    label -> set_expand(true);
+    label -> set_margin(10);
+    label -> set_justify(Gtk::Justification::LEFT);
+
+    helpWindow -> set_child(*label);
+    helpWindow -> set_title("Operations");
+
+    helpWindow -> show();
+}
+
 /*
  * Good ol' window setup
  */
 MainWindow::MainWindow(GlobalContext *ctx) : view(ctx)
 {
+    const auto helpGroup = Gio::SimpleActionGroup::create();
+
+    helpGroup -> add_action("operations", sigc::ptr_fun(&MainWindow::onOperationsButton));
+    helpGroup -> add_action("about", sigc::ptr_fun(&MainWindow::onAboutButton));
+
+    insert_action_group("help", helpGroup);
+
+    auto globalMenu = Gio::Menu::create();
+
+    auto helpMenu = Gio::Menu::create();
+
+    helpMenu -> append("_Operations", "help.operations");
+    helpMenu -> append("_About", "help.about");
+
+    globalMenu -> append_submenu("_Help", helpMenu);
+
+    auto menuBar = Gtk::make_managed<Gtk::PopoverMenuBar>(globalMenu);
+
+    menuBar -> set_margin_bottom(10);
+
     context = ctx;
 
     const auto masterLayout = Gtk::make_managed<Gtk::Box>(Gtk::Orientation::VERTICAL);
+
+    masterLayout -> append(*menuBar);
 
     view.set_expand(true);
     view.set_margin_bottom(10);
@@ -158,8 +228,6 @@ MainWindow::MainWindow(GlobalContext *ctx) : view(ctx)
     expressionBox.signal_activate().connect(sigc::mem_fun(*this, &MainWindow::onExpressionTextFieldChange));
 
     masterLayout -> append(expressionBox);
-
-    masterLayout -> set_margin(10);
 
     set_child(*masterLayout);
 
