@@ -248,7 +248,12 @@ Expression *parseRecursive(const std::vector<std::string>::iterator tokensStart,
                 logInfo(std::format("Found static component: {}", token));
                 if (token == variable) return Expressions::Variable::create();
                 if (specialConstants.contains(token)) return Expressions::Constant::create(specialConstants.at(token));
-                if (isNumeric(token)) return Expressions::Constant::create(std::stod(token));
+                if (isNumeric(token))
+                {
+                    double value = std::stod(token);
+                    std::cout << value << std::endl;
+                    return Expressions::Constant::create(value);
+                }
             }
         }
         throw std::invalid_argument(std::format("Invalid static token"));
@@ -284,6 +289,7 @@ Expression *Util::parse(std::vector<std::string> tokens)
     {
         throw std::invalid_argument("Improper use of unary operations. Please use parentheses");
     }
+    logInfo(std::format("Received tokens: {}", tokens));
     return parseRecursive(tokens.begin(), tokens.end());
 }
 

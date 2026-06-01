@@ -3,8 +3,6 @@
 #include <cmath>
 #include <format>
 
-#include "../debugging/include/debugging.h"
-
 using namespace DynMath;
 
 constexpr int maxSubdivisionDepth = 15;
@@ -63,7 +61,7 @@ bool Grapher::subdivide(std::vector<Point> &segment, const double x0, const doub
  * V2 of the graphing function. I've read a bit on the topic and this here is a bit more complex
  * It checks for gaps in continuity itself instead of offloading that to the drawing function
  */
-std::vector<std::vector<Point>> Grapher::GraphExpression(const double minX, const double maxX, const double step) const
+std::vector<std::vector<Point>> Grapher::graphExpression(const double minX, const double maxX, const double step) const
 {
     std::vector<std::vector<Point>> out;
     std::vector<Point> segment;
@@ -71,7 +69,7 @@ std::vector<std::vector<Point>> Grapher::GraphExpression(const double minX, cons
     double x0 = minX;
     double y0 = fn -> evaluate(minX);
 
-    bool valid0 = isValid(x0);
+    bool valid0 = isValid(y0);
 
     if (valid0) segment.push_back({x0, y0});
 

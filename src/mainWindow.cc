@@ -6,6 +6,7 @@
 #include "debugging/include/debugging.h"
 #include "dynamicMath/include/dynamicMath.h"
 #include "dynamicMath/include/grapher.h"
+#include <locale>
 
 constexpr double yValueLimit = 1e4;
 constexpr double jumpLimit = 500;
@@ -70,7 +71,7 @@ void GraphView::onDraw(const Cairo::RefPtr<Cairo::Context> &cr, const int width,
     cr -> set_line_width(4);
     cr -> set_source_rgb(.5, 0, .7);
 
-    const auto graph = gr.GraphExpression(cameraX, cameraX + width / scale, 0.005);
+    const auto graph = gr.graphExpression(floor(cameraX), ceil(cameraX + width / scale), 0.005);
 
     for (const auto &segment : graph)
     {
@@ -193,6 +194,7 @@ void MainWindow::onOperationsButton()
  */
 MainWindow::MainWindow(GlobalContext *ctx) : view(ctx)
 {
+    std::locale::global(std::locale::classic());
     const auto helpGroup = Gio::SimpleActionGroup::create();
 
     helpGroup -> add_action("operations", sigc::ptr_fun(&MainWindow::onOperationsButton));
