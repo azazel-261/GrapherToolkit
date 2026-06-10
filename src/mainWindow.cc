@@ -1,12 +1,12 @@
 #include <gtkmm-4.0/gtkmm.h>
 #include <gtkmm/eventcontrollerscroll.h>
+#include <locale>
 
 #include "include/globalContext.h"
 #include "include/mainWindow.h"
 #include "debugging/include/debugging.h"
 #include "dynamicMath/include/dynamicMath.h"
 #include "dynamicMath/include/grapher.h"
-#include <locale>
 
 constexpr double yValueLimit = 1e4;
 constexpr double jumpLimit = 500;
@@ -91,7 +91,7 @@ void GraphView::onDraw(const Cairo::RefPtr<Cairo::Context> &cr, const int width,
 bool GraphView::onScroll(double dx, const double dy)
 {
     scale -= dy * 2;
-    scale = std::clamp(scale, 64.0, 512.0);
+    scale = std::clamp(scale, 4.0, 512.0);
     queue_draw();
     return true;
 }
@@ -130,6 +130,7 @@ void MainWindow::onExpressionTextFieldChange()
         popover -> set_child(*label);
         popover -> set_parent(expressionBox);
         popover -> set_has_arrow(true);
+        popover -> signal_closed().connect([popover]() { popover -> unparent(); });
         popover -> popup();
     }
 
@@ -145,7 +146,7 @@ void MainWindow::onAboutButton()
 {
     auto aboutWindow = Gtk::make_managed<Gtk::AboutDialog>();
 
-    aboutWindow -> set_program_name("GrapherToolkit");
+    aboutWindow -> set_program_name("Grapher Toolkit");
     aboutWindow -> set_version("V0.2");
     aboutWindow -> set_comments("Created by Heorhii Blahoveshchenkyi for the 2026L class of PW\n"
                                 "Resources used:\ngtkmm-4.0 library as well as all of the dependencies\nThe GNOME gtkmm docs\n"

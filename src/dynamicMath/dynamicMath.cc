@@ -41,6 +41,13 @@ const std::unordered_set<std::string> lowPriorityOperations = {"+", "-"};
 
 const std::unordered_set<std::string> mediumPriorityOperations = {"*", "/"};
 
+const std::map<int, std::unordered_set<std::string>> priorityMap = {
+    {0, {"+", "-"}},
+    {1, {"*", "/"}},
+    {2, {"^"}},
+    {3, {"sin", "cos", "tan", "log", "ln"}}
+};
+
 constexpr bool isNumeric(const std::string& src)
 {
     if (src.empty()) return false;
@@ -165,17 +172,17 @@ int evaluateTokenPriority(const std::vector<std::string>::iterator tokensStart, 
     {
         return -1;
     }
-    int depth = evaluateTokenDepth(tokensStart, index) * 3;
-    if (mediumPriorityOperations.contains(*(tokensStart + index)))
+    int depth = evaluateTokenDepth(tokensStart, index) * priorityMap.size();
+    for (const auto& pair : priorityMap)
     {
-        depth += 1;
+        if (pair.second.contains(*(tokensStart + index)))
+        {
+            depth += pair.first;
+            logInfo(std::format("Evaluated {} priority as {}", *(tokensStart + index), depth));
+            return depth;
+        }
     }
-    else if (!lowPriorityOperations.contains(*(tokensStart + index)))
-    {
-        depth += 2;
-    }
-    logInfo(std::format("Evaluated {} priority as {}", *(tokensStart + index), depth));
-    return depth;
+    return -1;
 }
 
 /*
