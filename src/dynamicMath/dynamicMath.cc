@@ -258,7 +258,6 @@ Expression *parseRecursive(const std::vector<std::string>::iterator tokensStart,
                 if (isNumeric(token))
                 {
                     double value = std::stod(token);
-                    std::cout << value << std::endl;
                     return Expressions::Constant::create(value);
                 }
             }
