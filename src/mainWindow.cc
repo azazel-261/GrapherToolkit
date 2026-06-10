@@ -8,9 +8,6 @@
 #include "dynamicMath/include/dynamicMath.h"
 #include "dynamicMath/include/grapher.h"
 
-constexpr double yValueLimit = 1e4;
-constexpr double jumpLimit = 500;
-
 /*
  * Not much here, just a lot of signal connections
  */
