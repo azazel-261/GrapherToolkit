@@ -37,10 +37,6 @@ const std::map<std::string, double> specialConstants = {
 
 const std::unordered_set<std::string> parentheses = {"(", ")"};
 
-const std::unordered_set<std::string> lowPriorityOperations = {"+", "-"};
-
-const std::unordered_set<std::string> mediumPriorityOperations = {"*", "/"};
-
 const std::map<int, std::unordered_set<std::string>> priorityMap = {
     {0, {"+", "-"}},
     {1, {"*", "/"}},
